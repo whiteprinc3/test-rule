@@ -20,14 +20,14 @@
   --inv-bg: #111827;
   --inv-fg: #ffffff;
   
-  /* Единый нежно-серый стиль для всех блоков */
+  /* Единый нежно-серый стиль */
   --box-border: #e2e8f0;
   --box-bg: #f8fafc;
 
   --serif: "IBM Plex Serif", "PT Serif", Georgia, "Times New Roman", serif;
   --sans: "IBM Plex Sans", "PT Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  --idw: 5.5rem;
+  --idw: 8rem; /* Увеличили ширину для длинных ID */
   --bar-h: 4.5rem;
   --side-w: 18rem;
 }
@@ -218,7 +218,7 @@ h1 {
 
 /* ЦЕНТРИРОВАНИЕ */
 .content-inner {
-  max-width: 1100px;
+  max-width: 1150px; /* Чуть расширили для удобства */
   margin: 0 auto;
   width: 100%;
 }
@@ -280,7 +280,9 @@ h1 {
   grid-area: id;
   font: 500 0.8125rem/1.5 var(--mono);
   color: var(--ink-3);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* Для очень длинных слов */
+  word-break: break-word;
+  hyphens: auto;
 }
 .id:not(:empty) {
   background: var(--tint);
