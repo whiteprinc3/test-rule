@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
 <style>
-/* Layout: современный фулл-скрин дашборд без ограничений по ширине. */
 :root {
   --bg: #f9fafb;
   --surface: #ffffff;
@@ -20,17 +19,25 @@
   --tint: #f3f4f6;
   --inv-bg: #111827;
   --inv-fg: #ffffff;
+  
+  /* Цвета для блоков */
   --accent: #b45309;
   --accent-bg: #fffbeb;
   --note: #15803d;
+  --note-bg: #f0fdf4;
   --warn: #b91c1c;
+  --warn-bg: #fef2f2;
+  --plain: #4b5563;
+  --plain-bg: #f3f4f6;
+
   --serif: "IBM Plex Serif", "PT Serif", Georgia, "Times New Roman", serif;
   --sans: "IBM Plex Sans", "PT Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  --idw: 6.5rem;
+  --idw: 5.5rem;
   --bar-h: 4.5rem;
   --side-w: 18rem;
 }
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0f1115;
@@ -43,10 +50,15 @@
     --tint: #1f232b;
     --inv-bg: #f3f4f6;
     --inv-fg: #111827;
+    
     --accent: #f59e0b;
     --accent-bg: #291d0a;
     --note: #4ade80;
+    --note-bg: #0f1f15;
     --warn: #f87171;
+    --warn-bg: #2a1010;
+    --plain: #9ca3af;
+    --plain-bg: #1a1c22;
     color-scheme: dark;
   }
 }
@@ -61,10 +73,15 @@
   --tint: #1f232b;
   --inv-bg: #f3f4f6;
   --inv-fg: #111827;
+  
   --accent: #f59e0b;
   --accent-bg: #291d0a;
   --note: #4ade80;
+  --note-bg: #0f1f15;
   --warn: #f87171;
+  --warn-bg: #2a1010;
+  --plain: #9ca3af;
+  --plain-bg: #1a1c22;
   color-scheme: dark;
 }
 
@@ -79,13 +96,13 @@ body {
   font: 400 1rem/1.65 var(--sans);
   -webkit-text-size-adjust: 100%;
   height: 100vh;
-  overflow: hidden; /* Фиксируем body, скролл будет в контенте */
+  overflow: hidden;
 }
 
 button, input { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--inv-bg); outline-offset: 2px; }
 
-/* Главный контейнер (на весь экран) */
+/* Главный контейнер на весь экран */
 .app {
   display: flex;
   height: 100vh;
@@ -93,7 +110,7 @@ button, input { font: inherit; color: inherit; }
   overflow: hidden;
 }
 
-/* --- Левая боковая панель --- */
+/* --- Левая панель --- */
 .sidebar {
   width: var(--side-w);
   flex: 0 0 var(--side-w);
@@ -154,7 +171,7 @@ h1 {
 .nav .c { font: 400 0.75rem/1 var(--mono); color: var(--ink-3); font-variant-numeric: tabular-nums; flex: none; }
 .nav li.off a { opacity: 0.4; pointer-events: none; }
 
-/* --- Правая часть (основная) --- */
+/* --- Правая часть --- */
 .workspace {
   flex: 1;
   display: flex;
@@ -164,14 +181,14 @@ h1 {
   background: var(--bg);
 }
 
-/* Шапка воркспейса */
+/* Шапка */
 .header {
   height: var(--bar-h);
   flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2.5rem;
+  padding: 0 2rem;
   background: var(--surface);
   border-bottom: 1px solid var(--rule);
   z-index: 5;
@@ -216,12 +233,13 @@ h1 {
   padding: 2rem 3rem 4rem;
 }
 
+/* Убрал ограничение по центру, контент теперь на всю ширину */
 .content-inner {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 1600px; /* Ограничение только для совсем огромных 4K мониторов */
 }
 
-/* Панель инструментов над контентом */
+/* Панель инструментов */
 .tools {
   display: flex;
   flex-wrap: wrap;
@@ -239,7 +257,7 @@ h1 {
 .check input { width: 1.1rem; height: 1.1rem; margin: 0; accent-color: var(--inv-bg); cursor: pointer; }
 
 /* --- Контентные блоки --- */
-.sec { scroll-margin-top: calc(var(--bar-h) + 2rem); padding-top: 2rem; }
+.sec { scroll-margin-top: calc(var(--bar-h) + 2rem); padding-top: 2.5rem; }
 .sec:first-child { padding-top: 0; }
 .sec-head {
   display: flex;
@@ -260,10 +278,11 @@ h1 {
   grid-template-columns: var(--idw) minmax(0, 1fr) auto;
   grid-template-areas: "id body act";
   gap: 0 1.5rem;
-  padding: 1.25rem 0;
+  padding: 1.5rem 0;
   border-bottom: 1px solid var(--rule);
 }
-/* Спец-класс для слитных пунктов (без номера) */
+
+/* Слитные пункты (без номера) */
 .row.prose {
   display: block;
   padding: 1.25rem 0;
@@ -289,60 +308,56 @@ h1 {
 .body { grid-area: body; min-width: 0; }
 .act { grid-area: act; align-self: start; }
 .full { margin: 0 0 0.25rem; font: 400 0.875rem/1.5 var(--mono); color: var(--ink-3); }
-.txt { margin: 0; max-width: 95ch; overflow-wrap: anywhere; font-size: 1.0625rem; line-height: 1.65; }
+.txt { margin: 0; max-width: 100%; overflow-wrap: anywhere; font-size: 1.0625rem; line-height: 1.65; }
 
-/* Метаданные */
-.meta {
-  margin: 1rem 0 0;
+/* --- Блоки заметок (Санкции, Примечания, Примеры) --- */
+.blocks-container {
+  margin: 1.25rem 0 0;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  max-width: 95ch;
+  gap: 0.5rem;
+  max-width: 1000px;
 }
-.meta > div {
-  display: grid;
-  grid-template-columns: 8rem minmax(0, 1fr);
-  gap: 0 1rem;
-  padding: 0.25rem 0;
-  font-size: 0.9375rem;
-}
-.meta dt {
-  font: 500 0.6875rem/1.9 var(--mono);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  padding-top: 0.1rem;
-}
-.meta dd { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
-.meta > div[data-kind="note"] dt { color: var(--note); }
-.meta > div[data-kind="warn"] dt { color: var(--warn); }
 
-/* Санкции */
-.sanction {
-  margin: 1rem 0 0;
-  max-width: 95ch;
+.info-block {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  padding: 0.75rem 1.25rem;
-  background: var(--accent-bg);
-  border-left: 4px solid var(--accent);
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid;
   border-radius: 0 6px 6px 0;
   transition: background 0.15s ease;
 }
-.row:hover .sanction { background: color-mix(in srgb, var(--accent-bg) 85%, var(--accent) 15%); }
-.sanction-label {
+
+.info-label {
   font: 600 0.6875rem/1.2 var(--mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
 }
-.sanction-value {
+
+.info-value {
   font: 500 0.9375rem/1.5 var(--sans);
   color: var(--ink);
   letter-spacing: 0.01em;
 }
-.sanction-value span { display: block; }
+.info-value span { display: block; }
+
+/* Стили для каждого типа */
+.info-block.sanction { background: var(--accent-bg); border-color: var(--accent); }
+.info-block.sanction .info-label { color: var(--accent); }
+.row:hover .info-block.sanction { background: color-mix(in srgb, var(--accent-bg) 85%, var(--accent) 15%); }
+
+.info-block.plain { background: var(--plain-bg); border-color: var(--plain); }
+.info-block.plain .info-label { color: var(--plain); }
+.row:hover .info-block.plain { background: color-mix(in srgb, var(--plain-bg) 85%, var(--plain) 15%); }
+
+.info-block.note { background: var(--note-bg); border-color: var(--note); }
+.info-block.note .info-label { color: var(--note); }
+.row:hover .info-block.note { background: color-mix(in srgb, var(--note-bg) 85%, var(--note) 15%); }
+
+.info-block.warn { background: var(--warn-bg); border-color: var(--warn); }
+.info-block.warn .info-label { color: var(--warn); }
+.row:hover .info-block.warn { background: color-mix(in srgb, var(--warn-bg) 85%, var(--warn) 15%); }
 
 /* Кнопка копирования */
 .copy {
@@ -381,7 +396,7 @@ mark { background: var(--inv-bg); color: var(--inv-fg); padding: 0 0.12em; borde
 
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* Адаптив для мобильных */
+/* Адаптив */
 @media (max-width: 1024px) {
   .sidebar { position: fixed; transform: translateX(-100%); transition: transform 0.3s ease; }
   .sidebar.open { transform: translateX(0); }
@@ -393,8 +408,6 @@ mark { background: var(--inv-bg); color: var(--inv-fg); padding: 0 0.12em; borde
   .id { justify-self: start; }
   .row.noid { grid-template-areas: "body body"; }
   .row.noid .id, .row.noid .act { display: none; }
-  .meta > div { grid-template-columns: 1fr; gap: 0.1rem; }
-  .meta dt { padding-top: 0; }
   .copy { opacity: 1 !important; }
   .tab { padding: 0.5rem; font-size: 0.9rem; }
   .search { display: none; }
@@ -662,25 +675,24 @@ mark { background: var(--inv-bg); color: var(--inv-fg); padding: 0 0.12em; borde
     return { shown: shown, total: total };
   }
 
-  function metaRow(label, value, kind) {
-    return '<div' + (kind ? ' data-kind="' + kind + '"' : "") + "><dt>" + esc(label) + "</dt><dd>" + value + "</dd></div>";
+  function infoBlock(cls, label, value) {
+    return '<div class="info-block ' + cls + '">' +
+      '<span class="info-label">' + esc(label) + '</span>' +
+      '<div class="info-value">' + value + '</div>' +
+    '</div>';
   }
 
   function rowHtml(it, doc, secKey, idx) {
     var rid = it.i || "";
-    var meta = "";
-    if (it.p) meta += metaRow("Пояснение", hl(it.p), "plain");
-    if (it.n) meta += metaRow("Примечание", hl(it.n), "note");
-    if (it.x) meta += metaRow("Пример", hl(it.x), "warn");
-    if (it.e) meta += metaRow("Исключение", hl(it.e), "warn");
-
-    var sanction = "";
+    var blocks = "";
+    
+    if (it.p) blocks += infoBlock("plain", "Пояснение", hl(it.p));
+    if (it.n) blocks += infoBlock("note", "Примечание", hl(it.n));
+    if (it.x) blocks += infoBlock("warn", "Пример", hl(it.x));
+    if (it.e) blocks += infoBlock("warn", "Исключение", hl(it.e));
     if (it.s) {
-      sanction = '<div class="sanction">' +
-        '<span class="sanction-label">' + esc(doc.sLabel) + '</span>' +
-        '<div class="sanction-value">' +
-          arr(it.s).map(function (v) { return "<span>" + hl(v) + "</span>"; }).join("") +
-        '</div></div>';
+      var sVal = arr(it.s).map(function (v) { return "<span>" + hl(v) + "</span>"; }).join("");
+      blocks += infoBlock("sanction", doc.sLabel, sVal);
     }
 
     var isProse = !rid;
@@ -691,8 +703,7 @@ mark { background: var(--inv-bg); color: var(--inv-fg); padding: 0 0.12em; borde
       '<div class="body">' +
         (it.full ? '<p class="full">' + hl(it.full) + "</p>" : "") +
         '<p class="txt">' + hl(it.t) + "</p>" +
-        (meta ? '<dl class="meta">' + meta + "</dl>" : "") +
-        sanction +
+        (blocks ? '<div class="blocks-container">' + blocks + "</div>" : "") +
       "</div>" +
       '<div class="act"><button class="copy" type="button" data-sec="' + secKey + '" data-idx="' + idx + '" aria-label="Копировать пункт ' + esc(rid || "") + '">Копировать</button></div>' +
     "</article>";
@@ -754,7 +765,6 @@ mark { background: var(--inv-bg); color: var(--inv-fg); padding: 0 0.12em; borde
     document.getElementById("panel").setAttribute("aria-labelledby", "tab-" + key);
     document.title = doc.title + " | Kami yufu.su";
     
-    // Сброс скролла наверх при смене вкладки
     document.getElementById("content-scroll").scrollTo(0, 0);
     observe();
   }
