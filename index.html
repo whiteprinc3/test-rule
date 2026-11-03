@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Правила Kami | yufu.su</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+/* Layout: лист документа на сером фоне. Шапка, липкая панель вкладок и поиска, слева оглавление разделов, справа реестр пунктов в виде строк "номер | текст | действие". */
+:root {
+  --desk: #dcdfe3;
+  --paper: #f3f4f6;
+  --ink: #1e2227;
+  --ink-2: #474d55;
+  --ink-3: #636a73;
+  --rule: #c7cbd1;
+  --rule-strong: #959ca5;
+  --tint: #e6e8eb;
+  --inv-bg: #2a2f35;
+  --inv-fg: #f3f4f6;
+  --accent: #8a5a2b;
+  --accent-bg: #f0e6da;
+  --note: #3f6b4f;
+  --warn: #8a4a2b;
+  --serif: "IBM Plex Serif", "PT Serif", Georgia, "Times New Roman", serif;
+  --sans: "IBM Plex Sans", "PT Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --idw: 6.5rem;
+  --bar-h: 5rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --desk: #121417;
+    --paper: #1c2024;
+    --ink: #e5e7ea;
+    --ink-2: #b6bbc1;
+    --ink-3: #8d939a;
+    --rule: #32383e;
+    --rule-strong: #565d65;
+    --tint: #262b30;
+    --inv-bg: #e5e7ea;
+    --inv-fg: #181b1f;
+    --accent: #d6a56a;
+    --accent-bg: #2e2620;
+    --note: #8fc9a4;
+    --warn: #e0a183;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --desk: #121417;
+  --paper: #1c2024;
+  --ink: #e5e7ea;
+  --ink-2: #b6bbc1;
+  --ink-3: #8d939a;
+  --rule: #32383e;
+  --rule-strong: #565d65;
+  --tint: #262b30;
+  --inv-bg: #e5e7ea;
+  --inv-fg: #181b1f;
+  --accent: #d6a56a;
+  --accent-bg: #2e2620;
+  --note: #8fc9a4;
+  --warn: #e0a183;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: auto; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+body {
+  margin: 0;
+  background: var(--desk);
+  color: var(--ink);
+  font: 400 0.9375rem/1.65 var(--sans);
+  padding-block: 1.5rem 2.5rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--paper);
+  z-index: 10;
+}
+
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.sheet {
+  max-width: 74rem;
+  margin: 0 auto;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+}
+
+/* Шапка документа */
+.mast {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  padding: 1.5rem 1.5rem 1.1rem;
+}
+.org {
+  margin: 0 0 0.35rem;
+  font: 500 0.75rem/1.2 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+h1 {
+  margin: 0;
+  font: 600 1.75rem/1.2 var(--serif);
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+.facts {
+  margin: 0;
+  font: 400 0.8125rem/1.4 var(--mono);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Липкая панель: вкладки и поиск */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--paper);
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.tabs { display: flex; gap: 0; }
+.tab {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.55rem 1.1rem;
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 0;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.tab + .tab { border-left: 0; }
+.tab:hover { background: var(--tint); color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--inv-bg); border-color: var(--inv-bg); color: var(--inv-fg); }
+.tab .n { font: 400 0.75rem/1 var(--mono); font-variant-numeric: tabular-nums; opacity: 0.8; }
+
+.search { flex: 1 1 15rem; max-width: 26rem; margin-left: auto; min-width: 0; }
+.search input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0;
+  color: var(--ink);
+}
+.search input::placeholder { color: var(--ink-3); opacity: 1; }
+.search input:focus-visible { outline-offset: 0; }
+
+/* Тело */
+.layout {
+  display: grid;
+  grid-template-columns: 15.5rem minmax(0, 1fr);
+  gap: 0 2.5rem;
+  padding: 1.5rem;
+  align-items: start;
+}
+.side {
+  position: sticky;
+  top: calc(var(--bar-h) + 1rem + env(safe-area-inset-top, 0px));
+  max-height: calc(100vh - var(--bar-h) - 2rem);
+  overflow-y: auto;
+  min-width: 0;
+}
+.side h2 {
+  margin: 0 0 0.5rem;
+  font: 500 0.6875rem/1.2 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.nav { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.nav a {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+.nav a:hover { background: var(--tint); color: var(--ink); }
+.nav a[aria-current="true"] { background: var(--tint); color: var(--ink); font-weight: 600; }
+.nav .c { font: 400 0.75rem/1 var(--mono); color: var(--ink-3); font-variant-numeric: tabular-nums; flex: none; }
+.nav li.off a { opacity: 0.45; pointer-events: none; }
+
+.main { min-width: 0; }
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  padding-bottom: 0.9rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+.status { margin: 0; font-variant-numeric: tabular-nums; }
+.check { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none; }
+.check input { width: 1rem; height: 1rem; margin: 0; accent-color: var(--inv-bg); }
+
+.sec { scroll-margin-top: calc(var(--bar-h) + 1rem); padding-top: 1.25rem; }
+.sec-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--ink);
+}
+.sec-head .no { font: 500 0.75rem/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.sec-head h3 { margin: 0; font: 600 1.25rem/1.3 var(--serif); text-wrap: balance; }
+.sec-head .cnt { margin-left: auto; font: 400 0.75rem/1 var(--mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* Пункт */
+.row {
+  display: grid;
+  grid-template-columns: var(--idw) minmax(0, 1fr) auto;
+  grid-template-areas: "id body act";
+  gap: 0 1.25rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.id {
+  grid-area: id;
+  font: 500 0.75rem/1.5 var(--mono);
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+.id:not(:empty) {
+  background: var(--tint);
+  align-self: start;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  text-align: center;
+}
+.body { grid-area: body; min-width: 0; }
+.act { grid-area: act; align-self: start; }
+.full { margin: 0 0 0.25rem; font: 400 0.8125rem/1.5 var(--mono); color: var(--ink-3); }
+.txt { margin: 0; max-width: 70ch; overflow-wrap: anywhere; font-size: 0.9375rem; line-height: 1.65; }
+
+/* Метаданные: строки с меткой, без таблицы */
+.meta {
+  margin: 0.7rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: 70ch;
+}
+.meta > div {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 0 0.9rem;
+  padding: 0.2rem 0;
+  font-size: 0.875rem;
+}
+.meta dt {
+  font: 500 0.6875rem/1.9 var(--mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 0.05rem;
+}
+.meta dd { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
+.meta > div[data-kind="note"] dt { color: var(--note); }
+.meta > div[data-kind="warn"] dt { color: var(--warn); }
+
+/* Блок санкции */
+.sanction {
+  margin: 0.8rem 0 0;
+  max-width: 70ch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.55rem 0.8rem 0.6rem;
+  background: var(--accent-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 3px 3px 0;
+  transition: background 0.15s ease;
+}
+.row:hover .sanction { background: color-mix(in srgb, var(--accent-bg) 80%, var(--accent) 20%); }
+.sanction-label {
+  font: 500 0.625rem/1.2 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.9;
+}
+.sanction-value {
+  font: 500 0.8125rem/1.5 var(--sans);
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.sanction-value span { display: block; }
+
+/* Кнопка копирования */
+.copy {
+  padding: 0.2rem 0.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  font: 500 0.6875rem/1.4 var(--mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.copy:hover { color: var(--ink); border-color: var(--rule-strong); }
+@media (hover: hover) {
+  .copy { opacity: 0; }
+  .row:hover .copy, .row:focus-within .copy { opacity: 1; }
+}
+
+mark { background: var(--inv-bg); color: var(--inv-fg); padding: 0 0.12em; }
+
+.empty { padding: 2.5rem 0; max-width: 46ch; }
+.empty p { margin: 0 0 0.75rem; }
+.linkbtn {
+  padding: 0.45rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 0;
+  cursor: pointer;
+  color: var(--ink);
+}
+.linkbtn:hover { background: var(--tint); }
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.35rem 1.5rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--rule-strong);
+  font: 400 0.75rem/1.5 var(--mono);
+  color: var(--ink-3);
+}
+kbd { font: inherit; padding: 0 0.3em; border: 1px solid var(--rule-strong); }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 860px) {
+  body { padding-block: 0 1.5rem; }
+  .sheet { border-left: 0; border-right: 0; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))) calc(-1 * max(16px, env(safe-area-inset-right, 0px))); }
+  .mast, .bar, .foot { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .layout { grid-template-columns: minmax(0, 1fr); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-top: 1rem; }
+  .side { position: static; max-height: none; overflow: visible; margin-bottom: 0.75rem; }
+  .side h2 { display: none; }
+  .nav { flex-direction: row; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.4rem; }
+  .nav li { flex: none; }
+  .nav a { border: 1px solid var(--rule-strong); white-space: nowrap; padding: 0.4rem 0.7rem; }
+  .nav a[aria-current="true"] { background: var(--inv-bg); color: var(--inv-fg); border-color: var(--inv-bg); }
+  .tabs { width: 100%; }
+  .tab { flex: 1 1 0; justify-content: center; flex-wrap: wrap; gap: 0.15rem 0.5rem; padding: 0.55rem 0.5rem; text-align: center; }
+  .search { max-width: none; flex-basis: 100%; margin-left: 0; }
+  .row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "id act" "body body"; gap: 0.3rem 1rem; padding: 0.9rem 0; }
+  .id { justify-self: start; }
+  .row.noid { grid-template-areas: "body body"; }
+  .row.noid .id, .row.noid .act { display: none; }
+  .meta > div { grid-template-columns: 1fr; gap: 0.1rem; }
+  .meta dt { padding-top: 0; }
+  .copy { opacity: 1 !important; }
+  h1 { font-size: 1.5rem; }
+}
+</style>
+
+<div class="sheet">
+  <header class="mast">
+    <div>
+      <p class="org">Kami | yufu.su</p>
+      <h1 id="h1">Правила проекта</h1>
+    </div>
+    <p class="facts" id="facts"></p>
+  </header>
+
+  <div class="bar" id="bar">
+    <div class="tabs" role="tablist" aria-label="Документы">
+      <button class="tab" role="tab" id="tab-project" aria-controls="panel" data-tab="project" type="button">Правила проекта <span class="n" data-count="project"></span></button>
+      <button class="tab" role="tab" id="tab-admin" aria-controls="panel" data-tab="admin" type="button">Правила администрации <span class="n" data-count="admin"></span></button>
+    </div>
+    <div class="search">
+      <label class="sr" for="q">Поиск по документу</label>
+      <input id="q" type="search" placeholder="Поиск по пунктам, терминам и санкциям" autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="side" aria-label="Разделы">
+      <h2>Разделы</h2>
+      <ul class="nav" id="nav"></ul>
+    </aside>
+    <main class="main" id="panel" role="tabpanel" tabindex="-1">
+      <div class="tools">
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+        <label class="check"><input type="checkbox" id="only"><span id="onlyLabel">Только пункты с санкцией</span></label>
+      </div>
+      <div id="content"></div>
+    </main>
+  </div>
+
+  <footer class="foot">
+    <span>Документ является собственностью проекта Kami | yufu.su</span>
+    <span>Поиск: клавиша <kbd>/</kbd>. Сброс запроса: <kbd>Esc</kbd></span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Данные документов ---------- */
+
+  var DOCS = {
+    project: {
+      title: "Правила проекта",
+      sLabel: "Санкция",
+      onlyLabel: "Только пункты с санкцией",
+      sections: [
+        { id: "preamble", title: "Преамбула", items: [
+          { t: "Документ является собственностью проекта Kami | yufu.su и обязателен к исполнению при нахождении на сервере." },
+          { t: "Заходя на наш сервер вы автоматически соглашаетесь с правилами, указанными ниже." },
+          { t: "Правила могут обновляться без предупреждения." },
+          { t: "Несоблюдение правил карается в зависимости от нарушения и его тяжести в соответствии с правилами." },
+          { t: "Высшая администрация может выдавать наказания на своё усмотрение при необходимости с обоснованием своих причин." }
+        ]},
+        { id: "terms-rp", title: "RP термины", items: [
+          { i: "RP", full: "Roleplay", t: "Описывает множество действий, которые образуют реалистичную/полуреалистичную, чаще реалистичную, ситуацию. «RolePlay» означает жить ролью или персонажем, который несет в себе историю, цели и потребности, как и в реальной жизни." },
+          { i: "IC", full: "In character", t: "Коммуникации и действия, совершенные вашим персонажем во время отыгровки роли." },
+          { i: "OOC", full: "Out of character", t: "Коммуникация и действия, совершенные не во время отыгровки вашего персонажа. Подразумевает глобальный/локальный ООС чат и не требует каких либо отыгровок." },
+          { i: "VOID", t: "Откат RP действия, совершенного персонажем во время отыгровки своей роли. Игрок имеет право сам откатить свое действие, если оно не носит существенный RP характер, либо банальная случайность. В случае, когда персонаж совершил продуманное действие, его откат должна подтвердить администрация. Игроки могут отказаться от «отката», принудив игрока отыгрывать свое действие." }
+        ]},
+        { id: "terms-violations", title: "Термины нарушений", items: [
+          { i: "FreeDamage", t: "Запрещено намеренно наносить урон без ведомой на то причины.", s: "Kick >> Ban 2 - 4 hours" },
+          { i: "RDM", full: "Random DeathMatch", t: "Убийство от 1 до 2 человек без ведомой на то причины.", s: "Kick >> Ban 1 days" },
+          { i: "MassRDM", t: "Убийство от 3 и более человек без ведомой на то причины.", s: "Ban 3 - 14 days" },
+          { i: "NonRP", t: "Нарушение внутриигровой системы, нарушение отыгровки своей роли и неадекватное поведение.", s: "Kick >> Ban 2 hours - 4 days" },
+          { i: "MetaGaming", t: "Получение и перенос информации из OOC чата в IC чат.", n: "Перед тем как сказать NRP информацию, оповестите перед этим ближайших людей, которым это может помешать.", p: "Использование ООС информации, которую ваш персонаж не знает «по RP».", s: "Mute 1-3 hours >> Kick >> Ban 12 hours" },
+          { i: "NITRP", full: "No Intent to Roleplay", t: "Уход в АФК во время RP процесса, выход из игры так же приравнивается к NITRP, игнорирование отыгровок (в /do и т.д.).", n: "Если вы вылетели, у вас есть 25 минут вернуться в игру.", s: "Ban 4 - 12 hours" },
+          { i: "BugAbuse", t: "Запрещено использование багов в своих целях и для получения преимущества.", s: ["Kick >> Ban 2 hours - 2 days", "Ban 15 days - Permaban (при существенном нарушении)"] },
+          { i: "NLR", full: "New Life Rules", t: "Также вы забываете все что было за 10 минут перед смертью, личность убийцы, где и почему.", s: "Ban 6 - 12 hours" },
+          { i: "AA", full: "Admin Abuse", t: "Запрещается использование прав администратора в своих целях и для получения выгоды в свою сторону.", s: "Ban 1 - 30 days >> Снятие с должности" },
+          { i: "CharAbuse", t: "Запрещена смена персонажа через yufu_char во время RP процесса. Также запрещено использовать RP информацию на разных персонажах.", s: "Ban 1 day > deleted char" },
+          { i: "BodyBlock", t: "Запрещено намеренно блокировать возможность прохода другого игрока в узком пространстве более 15 секунд.", e: "RP ситуации.", s: "Ban 2 hours" },
+          { i: "LTAP", full: "Leave to Avoid Punishment", t: "Запрещено целенаправленно покидать игру во время разборок с администрацией. Если вы вылетели, у вас есть 25 минут вернуться в игру. Человек признается виновным, если в течение этого времени не вернулся и никак не попытался связаться.", s: "+Ban 6 hours к имеющемуся нарушению" },
+          { i: "NITE", full: "No Intent to Event", t: "Запрещено мешать проведению ивента.", s: "Ban 1-5 hours" },
+          { i: "Hair Abuse", t: "Запрещено изменять цвет волос на неоновый (светящийся).", s: "Приравнивается к NonRP" }
+        ]},
+        { id: "general", num: 1, title: "Общее положение", items: [
+          { i: "1.1", t: "Сервер позиционирует себя как русскоязычный, все РП диалоги должны происходить на русском языке.", s: "Приравнивается к NonRP" },
+          { i: "1.2", t: "Запрещается использование стороннего ПО, предоставляющего преимущества над игроками.", s: "Ban 30 дней - Permaban" },
+          { i: "1.3", t: "Запрещаются махинации с правилами, явно как и активный поиск дыр в нём.", s: "Ban 15 дней" },
+          { i: "1.4", t: "Запрещается обход бана.", s: "Удвоение срока" },
+          { i: "1.4.1", t: "Запрещается использование Мульти-Аккаунта.", e: "Высшая администрация под прикрытием для контроля нижестоящих лиц.", s: "Permaban второго аккаунта" },
+          { i: "1.5", t: "Запрещено вредительство проекту, серверу, форуму, официальным Discord серверам проекта.", s: "Ban 15-30d / PermBan / PermBan на всех серверах проекта" },
+          { i: "1.6", t: "Запрещено оскорбление, неуважительное отношение, унижение и неуважительное общение к администрации сервера.", s: "Ban 2d - 14d" },
+          { i: "1.7", t: "Запрещено совершать многочисленные нарушения правил сервера.", n: "Многочисленным нарушением является нарушение 7+ правил за одну ситуацию.", s: "Ban 7-30d / PermBan" },
+          { i: "1.8", t: "Запрещено выдавать себя за персонал сервера.", s: "Ban 12h-3d" },
+          { i: "1.8.1", t: "Technical staff не имеет никаких преимуществ на сервере, они равны перед правилами как и обычные игроки.", s: "Ban 12h-3d >> Снятие прав" },
+          { i: "1.9", t: "Запрещено распространение информации или материалов, касающихся работы персонала проекта.", n: "К данной информации относятся: закрытые голосовые каналы/чаты администрации, видеозаписи работы и т.п.", e: "Разрешение высшей администрации.", s: "Ban 15-30d / PermBan / PermBan на всех серверах проекта" },
+          { i: "1.10", t: "Запрещается обман администрации.", s: "Ban 12 - 24 часов" },
+          { i: "1.10.1", t: "Запрещена бессмысленная подача жалоб на темы, не связанные с проектом/сервером.", s: "Kick / Ban 2 часа" },
+          { i: "1.11", t: "Запрещена реклама иных проектов на сервере без согласования основателей.", s: "Ban 1-3 дня - Permaban" },
+          { i: "1.12", t: "На сервере действует прецедентная система правил.", n: "Если игрок нарушил не описанное ни в каких правилах сервера, то он может быть наказан с разрешения старшей администрации." },
+          { i: "1.13", t: "Запрещено провоцировать игроков на нарушение правил сервера.", s: "Ban 1 - 5 часов" },
+          { i: "1.13.1", t: "Если куратор сервера вынес какое либо решение, которое граничит с мерой наказания/мерой пресечения, значит так действительно требуется, и обжалованию подлежит только со стороны самого куратора или основателя проекта." },
+          { i: "1.14", t: "Запрещено отыгрывать насильственные ERP действия без согласия обеих сторон, а также запрещено как-либо распространение фото/видео ERP.", s: "Ban 20 часов" },
+          { i: "1.16", t: "Запрещено сидеть на одном человеке больше 2-х людей с помощью Sit Anywhere.", s: "Приравнивается к NonRP" },
+          { i: "1.17", t: "Запрещено злоупотреблять («абузить») функционалом сервера.", s: "Kick / Ban 6 часов / Ban 14 дней" },
+          { i: "1.19", t: "NonRP time начинает действовать при количестве игроков менее 10 человек." },
+          { i: "1.19.1", t: "NonRP time позволяет снизить уровень RP до LightRP. От игроков требуется адекватное времяпровождение без нарушений правил и прочих вещей, которые способны навредить игрокам/функционалу сервера. NonRP time не освобождает от ответственности за нарушения правил, но позволяет админам простить многие вещи игрокам на свое усмотрение." },
+          { i: "1.20", t: "Запрещено иметь более 2-ух домов, в наказание один или несколько домов будут обнулены и деньги не будут возвращены!" },
+          { i: "1.20.1", t: "Чтобы иметь имущество, нужно иметь регулярный ежедневный онлайн от 1 часа.", s: "Изъятие имущества" },
+          { i: "1.21", t: "Запрещено вымогать реальные деньги у игроков.", s: "Ban 14-30d" },
+          { i: "1.22", t: "Запрещено использовать наручники во время активного боя или же на цель с оружием в руках, без общего согласия с РП обоснованием заковать вооружённого невозможно.", s: "Приравнивается к NonRP" }
+        ]},
+        { id: "combat", num: 3, title: "Положение для боя", items: [
+          { i: "3.1", t: "Запрещено переходить во время боя (при нанесении урона друг другу) в телепорты. Выходом из боя считается момент пропажи из поля зрения врага на 30 секунд и более.", s: "Kick/Ban 3-6 часов" },
+          { i: "3.2", t: "Запрещено во время боя спамить различными DarkRP анимациями или любые другие анимации, дающие преимущество в бою.", s: "Приравнивается к NRP" }
+        ]},
+        { id: "character", num: 4, title: "Положение о персонаже", items: [
+          { i: "4.1", t: "Запрещено иметь второго персонажа не функционально, то есть не используя системы персонажей.", s: "Откат создания второго персонажа + ЧС организации" },
+          { i: "4.2", t: "Запрещено отыгрывать женского персонажа, являясь мужчиной, и наоборот, без написания RP квенты и одобрения RP куратором.", e: "Ивент, МП.", s: "Ban 1h-3h / Ban 6h" },
+          { i: "4.3", t: "Запрещено использовать информацию между персонажами.", x: "У игрока есть 2 персонажа в разных кланах, информацию между ними использовать запрещено.", s: "Приравнивается к CharAbuse" }
+        ]},
+        { id: "kidnap", num: 5, title: "Правила похищений", items: [
+          { i: "5.2", t: "Запрещено как-либо пытаться унизить жертву в грубом характере.", x: "Пытаться унизить с целью розжига ООС конфликта и с целью личного удовлетворения.", e: "RP ситуация.", s: "Ban 1 час - 24 часа" },
+          { i: "5.3", t: "Минимальное количество похитителей должно превышать в два раза число похищенных, иначе это относится к NON RP.", e: "Глава клана." },
+          { i: "5.4", t: "Весь процесс похищения должен быть записан на видео/сделаны скрины с корректными отыгровками и количеством похитителей и похищенных." },
+          { i: "5.5", t: "Похищение при верном количестве похитителей является обязательным РП." },
+          { i: "5.6", t: "Максимальная длительность похищения не более 45 минут." }
+        ]},
+        { id: "nick", num: 6, title: "Правила никнейма", items: [
+          { i: "6", t: "Не допускается использование никнеймов, содержащих имена или фамилии известных личностей." },
+          { i: "6.1", t: "Возможны исключения с одобрения высшей администрации." },
+          { i: "6.2", t: "Запрещены оскорбительные, а также провокационные никнеймы." },
+          { i: "6.3", t: "Ваш никнейм должен содержать в себе Имя и Фамилию персонажа (не буквально Имя Фамилия).", x: "Boba Matsuoka" },
+          { i: "6.4", t: "Имена и фамилии в никнейме должны оформляться с заглавной буквы.", n: "Имя и фамилия должны оформляться только полной латиницей, либо кириллицей." },
+          { i: "6.5", t: "Запрещены имена, которых не существует в реальности.", e: "Разрешены адекватные NonRP никнеймы, если они имеют место быть в реалиях ???, или же у игрока имеется одобренная в дискорде RP квента." },
+          { i: "6.6", t: "Запрещены имена, несущие в себе скрытый смысл или звучание, а также никнеймы, не несущие смысловой нагрузки.", x: "Яша Лава, Пиз Дализ и пр." },
+          { i: "6.7", t: "Запрещено иметь любую приписку в никнейме.", e: "В нике командиры отрядов могут поставить КМД перед припиской (КМД CPT и т.п.).", n: "В нике разрешена одна укороченная приписка отряда (CMD, CPT и т.п.)." },
+          { t: "В случае несоответствия никнейма правилам, администрация обязана отказать в его изменении." }
+        ]},
+        { id: "chat", num: 7, title: "Правила чата", items: [
+          { i: "7.1", t: "Запрещены оскорбления в NonRP.", s: "Mute or Gag 3-6h / Ban 1-3h" },
+          { i: "7.2", t: "Запрещены провокации в NonRP.", s: "Mute/Gag 3-6h" },
+          { i: "7.3", t: "Запрещено завуалированное оскорбление или упоминание родственников в негативном, либо шуточном характере.", s: "Ban 3 часа" },
+          { i: "7.3.1", t: "Запрещено прямое оскорбление родных.", s: "Ban 1 day" },
+          { i: "7.4", t: "Запрещено оскорбление, унижение администрации сервера на разборках.", s: "+3 часа к сроку, если виновен" },
+          { i: "7.5", t: "Запрещен спам.", s: "Mute 1 час" },
+          { i: "7.6", t: "Запрещено чрезмерное использование Caps Lock.", s: "Mute 1 час" },
+          { i: "7.7", t: "Запрещено использовать программы для смены голоса (Clownfish и тому подобное).", s: "Gag 2 часа" },
+          { i: "7.9", t: "Запрещено отыгрывать персонажа противоположного вам пола в голосовом чате.", s: "Mute/Gag 1 час" },
+          { i: "7.10", t: "Голосовой чат является исключительно IC чатом, где запрещено любое общение по ООС.", e: "Обоюдное согласие при наличии не более 4 игроков, присутствие рядом администрации в профессии администратора.", s: "Предупреждение/Kick/Mute 1-3h / Ban 1-3h" },
+          { i: "7.11", t: "Разрешены корректные отыгровки действий (/me) через голосовой чат.", e: "Плохой микрофон. Если ваш микрофон плохо работает, вам запрещено отыгрывать через голосовой чат.", n: "Отыгровка должна происходить в будущем или настоящем времени.", x: "Сейчас возьму человека напротив на руки / Взял человека напротив на руки.", s: "Gag 1 час > Kick" },
+          { i: "7.12", t: "Запрещен обман в /do. Игрок обязан отвечать только правду при отыгровках /do.", s: "Приравнивается к NonRP" },
+          { i: "7.13", t: "Запрещены отыгровки в свою пользу.", s: "Приравнивается к NonRP" },
+          { i: "7.14", t: "Запрещено воспроизводить громкую музыку, записи, громкие и неприятные слуху звуки в микрофон (Soundpad, Foobar и etc.).", n: "Запрещено использование Soundpad и иных программ для использования посторонних звуков без предварительных отыгровок.", s: "Gag 1 час" },
+          { i: "7.15", t: "Запрещено разглашать личную информацию игроков без их ведома и согласия.", s: "Ban 7 day > Ban 30 day > Permaban" },
+          { i: "7.16", t: "Запрещены ban words, слова, запрещённые на Twitch.tv.", n: "Со списком запретных слов можно ознакомиться тут.", s: "Kick / Mute 1-4h / Ban 30m-3h" },
+          { i: "7.17", t: "Запрещена отправка NSFW контента и любого другого контента, который может как либо оскорбить и навредить другим игрокам.", s: "Mute/Gag 1 час > Ban 2 часа" },
+          { i: "7.18", t: "Запрещено использовать /grp для отыгровки мусорных, бессмысленных отыгровок.", s: "Mute 1 час" },
+          { i: "7.19", t: "Запрещены любые завуалированные и/или прямые оскорбления вероисповедания, религии и нации, а также действия, направленные на возбуждение ненависти либо вражды, в IC и ООС на почве разногласия о расовой, национальной, этнической, языковой принадлежности.", s: "Mute/Gag 1 час > Ban 12 часов" }
+        ]}
+      ]
+    },
+
+    admin: {
+      title: "Правила администрации",
+      sLabel: "Мера",
+      onlyLabel: "Только пункты с мерой",
+      sections: [
+        { id: "main", num: 1, title: "Основные положения", items: [
+          { i: "1.1", t: "Нарушение правил данного раздела также приравнивается к AA." },
+          { i: "1.2", t: "Администратору запрещено невыполнение минимальной нормы онлайна (1 час в сутки).", e: "Отпуск.", s: "Устный выговор / Строгий выговор / Снятие" },
+          { i: "1.3", t: "Администратор обязан быть ознакомлен с правилами сервера и следить за их обновлением.", s: "Беседа/Устный выговор" },
+          { i: "1.4", t: "Администратор имеет право наказывать игроков без жалобы, только в случае присутствия при нарушении (обязательно сохранять доказательства нарушения).", s: "Устный выговор" },
+          { i: "1.5", t: "Администратор обязан еженедельно отчитываться о проделанной работе в дискорд.", s: "Беседа/Снятие" },
+          { i: "1.6", t: "Администратор обязан хранить доказательства нарушений в течение 72 часов.", s: "Устный выговор / Строгий выговор" },
+          { i: "1.7", t: "Администратор своим поведением должен подавать пример другим игрокам. Запрещается грубить, уничижительно общаться или как-либо по-другому выказывать неуважение к игрокам проекта, нарушать или подбивать на нарушение правил сервера.", s: "Беседа/Устный выговор/Строгий выговор" },
+          { i: "1.8", t: "Администратору запрещено разглашать внутреннюю информацию проекта и работы администрации (из дискорда/форума/ЛС и т.п.).", e: "Разрешение высшей администрации.", s: "Снятие" },
+          { i: "1.9", t: "Администрация не имеет права запрашивать у игрока пароль от аккаунта, данные для двухфакторной аутентификации, токены для сброса пароля." },
+          { i: "1.10", t: "Администратору запрещено превышать полномочия администратора, то есть запрещено пользоваться полномочиями в выгоду себе ИЛИ другим игрокам.", s: "Строгий выговор/Снятие" }
+        ]},
+        { id: "issuance", num: 2, title: "Положение о выдачах", items: [
+          { i: "2.1", t: "Администратору запрещено выдавать себе или кому-либо модели, хп, броню, какое-либо оружие или SWEP'ы, а также спавнить что-либо без веской на то причины.", s: "Устный выговор/Строгий выговор/Снятие" }
+        ]},
+        { id: "complaints", num: 3, title: "Правила разбора жалоб на сервере", items: [
+          { i: "3.1", t: "При разборе жалобы администратор обязан вести себя уважительно по отношению к игрокам.", s: "Выговор" },
+          { i: "3.2", t: "При разборе жалобы администратор обязан выдавать наказание объективно и непредвзято.", s: "Беседа/Устный выговор/Выговор" },
+          { i: "3.3", t: "В случае если игрок, который подал жалобу, ведёт себя неадекватно, то администратор имеет право не рассматривать жалобу." },
+          { i: "3.4", t: "При разборе жалобы администратор имеет право выдать гаг игрокам, которые перебивают друг друга/мешают говорить администратору." },
+          { i: "3.5", t: "В случае если администратор, не находясь в клоке, заметил нарушения со стороны игрока, то администратор может забрать игрока сразу же на разборки." },
+          { i: "3.6", t: "Администратор обязан озвучить причину наказания игроку перед выдачей наказания.", s: "Устный выговор" },
+          { i: "3.7", t: "На администраторов также действуют правила сервера." },
+          { i: "3.8", t: "Администратор не имеет права просто так летать в ноуклипе без клока.", s: "Строгий выговор" },
+          { i: "3.9", t: "Администрация обязана помогать новым игрокам на сервере в его усвоении.", s: "Беседа/Устный выговор" },
+          { i: "3.10", t: "Перед выдачей наказания администратор обязан переместить нарушителя в nonrp зону (Админ зона).", e: "Старшая администрация.", s: "Строгий выговор" },
+          { i: "3.11", t: "Перед тем как забрать человека на разборки, администратор должен проверить, идёт ли у игрока бой или рп процесс. После окончания таковых он может забрать его в админ зону на разборки.", s: "Беседа/Устный выговор/Строгий выговор" },
+          { i: "3.12", t: "Если у игрока имеется жалоба (рапорт), то администрация обязана её разобрать в течение 10 минут после её подачи.", s: "Устный выговор" }
+        ]}
+      ]
+    }
+  };
+
+  var ORDER = ["project", "admin"];
+
+  /* ---------- Утилиты ---------- */
+
+  function norm(s) { return String(s).toLowerCase().replace(/ё/g, "е"); }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function arr(v) { return v == null ? [] : (Array.isArray(v) ? v : [v]); }
+  function plural(n, one, few, many) {
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+    return many;
+  }
+
+  /* Индекс для поиска */
+  ORDER.forEach(function (k) {
+    DOCS[k].sections.forEach(function (sec) {
+      sec.items.forEach(function (it) {
+        it.idx = norm([it.i, it.full, it.t, it.n, it.p, it.x, it.e, arr(it.s).join(" ")].filter(Boolean).join(" "));
+      });
+    });
+  });
+
+  var state = { tab: "project", q: "", words: [], only: false };
+
+  function matches(it) {
+    if (state.only && !it.s) return false;
+    for (var i = 0; i < state.words.length; i++) {
+      if (it.idx.indexOf(state.words[i]) === -1) return false;
+    }
+    return true;
+  }
+
+  function hl(text) {
+    if (!state.words.length) return esc(text);
+    var n = norm(text), ranges = [];
+    state.words.forEach(function (w) {
+      var pos = 0, at;
+      while ((at = n.indexOf(w, pos)) > -1) { ranges.push([at, at + w.length]); pos = at + w.length; }
+    });
+    if (!ranges.length) return esc(text);
+    ranges.sort(function (a, b) { return a[0] - b[0]; });
+    var merged = [ranges[0]];
+    for (var i = 1; i < ranges.length; i++) {
+      var last = merged[merged.length - 1];
+      if (ranges[i][0] <= last[1]) last[1] = Math.max(last[1], ranges[i][1]);
+      else merged.push(ranges[i]);
+    }
+    var out = "", p = 0;
+    merged.forEach(function (r) {
+      out += esc(text.slice(p, r[0])) + "<mark>" + esc(text.slice(r[0], r[1])) + "</mark>";
+      p = r[1];
+    });
+    return out + esc(text.slice(p));
+  }
+
+  function countDoc(k) {
+    var shown = 0, total = 0;
+    DOCS[k].sections.forEach(function (sec) {
+      sec.items.forEach(function (it) { total++; if (matches(it)) shown++; });
+    });
+    return { shown: shown, total: total };
+  }
+
+  /* ---------- Отрисовка ---------- */
+
+  function metaRow(label, value, kind) {
+    return '<div' + (kind ? ' data-kind="' + kind + '"' : "") + "><dt>" + esc(label) + "</dt><dd>" + value + "</dd></div>";
+  }
+
+  function rowHtml(it, doc, secKey, idx) {
+    var rid = it.i || "";
+    var meta = "";
+    if (it.p) meta += metaRow("Пояснение", hl(it.p), "plain");
+    if (it.n) meta += metaRow("Примечание", hl(it.n), "note");
+    if (it.x) meta += metaRow("Пример", hl(it.x), "warn");
+    if (it.e) meta += metaRow("Исключение", hl(it.e), "warn");
+
+    var sanction = "";
+    if (it.s) {
+      sanction = '<div class="sanction">' +
+        '<span class="sanction-label">' + esc(doc.sLabel) + '</span>' +
+        '<div class="sanction-value">' +
+          arr(it.s).map(function (v) { return "<span>" + hl(v) + "</span>"; }).join("") +
+        '</div></div>';
+    }
+
+    return '<article class="row' + (rid ? "" : " noid") + '">' +
+      '<div class="id">' + (rid ? hl(rid) : "") + "</div>" +
+      '<div class="body">' +
+        (it.full ? '<p class="full">' + hl(it.full) + "</p>" : "") +
+        '<p class="txt">' + hl(it.t) + "</p>" +
+        (meta ? '<dl class="meta">' + meta + "</dl>" : "") +
+        sanction +
+      "</div>" +
+      '<div class="act"><button class="copy" type="button" data-sec="' + secKey + '" data-idx="' + idx + '" aria-label="Копировать пункт ' + esc(rid || "") + '">Копировать</button></div>' +
+    "</article>";
+  }
+
+  function render() {
+    var key = state.tab, doc = DOCS[key];
+    var navHtml = "", html = "", shown = 0, total = 0;
+
+    doc.sections.forEach(function (sec) {
+      var list = [];
+      sec.items.forEach(function (it, idx) {
+        total++;
+        if (matches(it)) { list.push([it, idx]); shown++; }
+      });
+      var sid = key + "-" + sec.id;
+      navHtml += '<li class="' + (list.length ? "" : "off") + '"><a href="#' + sid + '" data-sec="' + sid + '">' +
+        "<span>" + esc(sec.title) + '</span><span class="c">' + list.length + "</span></a></li>";
+      if (!list.length) return;
+      html += '<section class="sec" id="' + sid + '" aria-labelledby="h-' + sid + '">' +
+        '<div class="sec-head">' +
+          (sec.num ? '<span class="no">Раздел ' + sec.num + "</span>" : "") +
+          '<h3 id="h-' + sid + '">' + esc(sec.title) + "</h3>" +
+          '<span class="cnt">' + list.length + " " + plural(list.length, "пункт", "пункта", "пунктов") + "</span>" +
+        "</div>" +
+        list.map(function (p) { return rowHtml(p[0], doc, sec.id, p[1]); }).join("") +
+      "</section>";
+    });
+
+    if (!shown) {
+      var other = ORDER.filter(function (k) { return k !== key; })[0];
+      var oc = countDoc(other);
+      html = '<div class="empty"><p>' +
+        (state.q ? "По запросу «" + esc(state.q) + "» в этом документе ничего не найдено." : "В этом документе нет пунктов, подходящих под фильтр.") +
+        "</p>" +
+        (oc.shown ? '<p><button class="linkbtn" type="button" data-goto="' + other + '">Показать совпадения в документе «' + esc(DOCS[other].title) + "» (" + oc.shown + ")</button></p>" : "") +
+        (state.q ? '<p><button class="linkbtn" type="button" data-clear="1">Сбросить запрос</button></p>' : "") +
+      "</div>";
+    }
+
+    document.getElementById("nav").innerHTML = navHtml;
+    document.getElementById("content").innerHTML = html;
+
+    var filtered = state.q || state.only;
+    document.getElementById("status").textContent = filtered
+      ? "Найдено " + shown + " из " + total + " " + plural(total, "пункта", "пунктов", "пунктов")
+      : "Всего " + total + " " + plural(total, "пункт", "пункта", "пунктов");
+    document.getElementById("onlyLabel").textContent = doc.onlyLabel;
+    document.getElementById("only").checked = state.only;
+    document.getElementById("h1").textContent = doc.title;
+    document.getElementById("facts").textContent =
+      doc.sections.length + " " + plural(doc.sections.length, "раздел", "раздела", "разделов") + " / " +
+      total + " " + plural(total, "пункт", "пункта", "пунктов");
+
+    ORDER.forEach(function (k) {
+      var c = countDoc(k);
+      document.querySelector('[data-count="' + k + '"]').textContent = filtered ? c.shown + "/" + c.total : String(c.total);
+      var t = document.getElementById("tab-" + k);
+      t.setAttribute("aria-selected", k === key ? "true" : "false");
+      t.tabIndex = k === key ? 0 : -1;
+    });
+    document.getElementById("panel").setAttribute("aria-labelledby", "tab-" + key);
+    document.title = doc.title + " | Kami yufu.su";
+    observe();
+  }
+
+  /* ---------- Подсветка текущего раздела ---------- */
+
+  var io = null;
+  function observe() {
+    if (io) io.disconnect();
+    if (!("IntersectionObserver" in window)) return;
+    var bar = document.getElementById("bar").offsetHeight || 80;
+    io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          var id = e.target.id;
+          document.querySelectorAll("#nav a").forEach(function (a) {
+            if (a.getAttribute("data-sec") === id) a.setAttribute("aria-current", "true");
+            else a.removeAttribute("aria-current");
+          });
+        }
+      });
+    }, { rootMargin: "-" + (bar + 24) + "px 0px -65% 0px", threshold: 0 });
+    document.querySelectorAll(".sec").forEach(function (s) { io.observe(s); });
+  }
+
+  function measure() {
+    var h = document.getElementById("bar").offsetHeight;
+    if (h) document.documentElement.style.setProperty("--bar-h", h + "px");
+  }
+
+  /* ---------- Маршрутизация по hash ---------- */
+
+  function applyHash(fromUser) {
+    var h = (location.hash || "").replace(/^#/, "");
+    var tab = state.tab, secId = null;
+    if (h === "project" || h === "admin") tab = h;
+    else if (/^(project|admin)-/.test(h)) { tab = h.split("-")[0]; secId = h; }
+    var changed = tab !== state.tab;
+    state.tab = tab;
+    if (changed) render();
+    if (secId) {
+      var el = document.getElementById(secId);
+      if (el) el.scrollIntoView();
+    } else if (changed && fromUser) {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function setTab(k) {
+    if (k === state.tab) return;
+    if (location.hash.replace(/^#/, "") === k) { applyHash(true); }
+    else location.hash = k;
+  }
+
+  /* ---------- Копирование ---------- */
+
+  function itemText(secKey, idx) {
+    var doc = DOCS[state.tab], sec = doc.sections.filter(function (s) { return s.id === secKey; })[0];
+    var it = sec.items[idx], lines = [];
+    lines.push((it.i ? it.i + (it.full ? " (" + it.full + ")" : "") + " " : "") + it.t);
+    if (it.p) lines.push("Пояснение: " + it.p);
+    if (it.n) lines.push("Примечание: " + it.n);
+    if (it.x) lines.push("Пример: " + it.x);
+    if (it.e) lines.push("Исключение: " + it.e);
+    arr(it.s).forEach(function (v) { lines.push(doc.sLabel + ": " + v); });
+    return lines.join("\n");
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function flash(btn, msg) {
+    btn.textContent = msg;
+    setTimeout(function () { btn.textContent = "Копировать"; }, 1600);
+  }
+
+  function copyItem(btn) {
+    var text = itemText(btn.getAttribute("data-sec"), +btn.getAttribute("data-idx"));
+    var done = function () { flash(btn, "Скопировано"); };
+    var fail = function () { flash(btn, fallbackCopy(text) ? "Скопировано" : "Не удалось"); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try { navigator.clipboard.writeText(text).then(done, fail); } catch (e) { fail(); }
+    } else fail();
+  }
+
+  /* ---------- События ---------- */
+
+  var qEl = document.getElementById("q");
+  var timer = null;
+  qEl.addEventListener("input", function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      state.q = qEl.value.trim();
+      state.words = norm(state.q).split(/\s+/).filter(Boolean);
+      render();
+    }, 90);
+  });
+  qEl.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { qEl.value = ""; state.q = ""; state.words = []; render(); }
+  });
+
+  document.getElementById("only").addEventListener("change", function (e) {
+    state.only = e.target.checked;
+    render();
+  });
+
+  document.querySelector(".tabs").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-tab]");
+    if (b) setTab(b.getAttribute("data-tab"));
+  });
+  document.querySelector(".tabs").addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    var i = ORDER.indexOf(state.tab), n = ORDER[(i + (e.key === "ArrowRight" ? 1 : ORDER.length - 1)) % ORDER.length];
+    setTab(n);
+    document.getElementById("tab-" + n).focus();
+    e.preventDefault();
+  });
+
+  document.getElementById("content").addEventListener("click", function (e) {
+    var c = e.target.closest(".copy");
+    if (c) { copyItem(c); return; }
+    var g = e.target.closest("[data-goto]");
+    if (g) { setTab(g.getAttribute("data-goto")); return; }
+    if (e.target.closest("[data-clear]")) {
+      qEl.value = ""; state.q = ""; state.words = []; render(); qEl.focus();
+    }
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      var t = e.target, tag = t && t.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || (t && t.isContentEditable)) return;
+      e.preventDefault();
+      qEl.focus();
+      qEl.select();
+    }
+  });
+
+  window.addEventListener("hashchange", function () { applyHash(true); });
+  window.addEventListener("resize", measure);
+  if ("ResizeObserver" in window) new ResizeObserver(measure).observe(document.getElementById("bar"));
+
+  /* ---------- Запуск ---------- */
+  applyHash(false);
+  render();
+  measure();
+  (function () {
+    var h = (location.hash || "").replace(/^#/, "");
+    if (/^(project|admin)-/.test(h)) {
+      var el = document.getElementById(h);
+      if (el) el.scrollIntoView();
+    }
+  })();
+})();
+</script>
