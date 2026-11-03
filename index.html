@@ -20,21 +20,9 @@
   --inv-bg: #111827;
   --inv-fg: #ffffff;
   
-  /* Нежные пастельные цвета */
-  --sanction: #dcbaba;     /* Пыльно-розовый */
-  --sanction-bg: #fdfafb;
-  
-  --note: #c1b4d6;         /* Лавандовый */
-  --note-bg: #faf9fc;
-  
-  --warn: #b3d2ed;         /* Нежно-голубой */
-  --warn-bg: #f7fafc;
-  
-  --exclude: #e6d7a3;      /* Пастельно-желтый */
-  --exclude-bg: #fdfcf8;
-  
-  --plain: #cbd5e1;        /* Светло-серый */
-  --plain-bg: #fafafa;
+  /* Единый нежно-серый стиль для всех блоков */
+  --box-border: #e2e8f0;
+  --box-bg: #f8fafc;
 
   --serif: "IBM Plex Serif", "PT Serif", Georgia, "Times New Roman", serif;
   --sans: "IBM Plex Sans", "PT Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
@@ -57,21 +45,8 @@
     --inv-bg: #f3f4f6;
     --inv-fg: #111827;
     
-    /* Приглушенные цвета для темной темы */
-    --sanction: #6b4c4c;
-    --sanction-bg: #1f1818;
-    
-    --note: #594a6b;
-    --note-bg: #191721;
-    
-    --warn: #4a5f73;
-    --warn-bg: #171a1f;
-    
-    --exclude: #736b4a;
-    --exclude-bg: #1c1b17;
-    
-    --plain: #4b5563;
-    --plain-bg: #1a1c22;
+    --box-border: #2d3748;
+    --box-bg: #1a1e24;
     color-scheme: dark;
   }
 }
@@ -87,20 +62,8 @@
   --inv-bg: #f3f4f6;
   --inv-fg: #111827;
   
-  --sanction: #6b4c4c;
-  --sanction-bg: #1f1818;
-  
-  --note: #594a6b;
-  --note-bg: #191721;
-  
-  --warn: #4a5f73;
-  --warn-bg: #171a1f;
-  
-  --exclude: #736b4a;
-  --exclude-bg: #1c1b17;
-  
-  --plain: #4b5563;
-  --plain-bg: #1a1c22;
+  --box-border: #2d3748;
+  --box-bg: #1a1e24;
   color-scheme: dark;
 }
 
@@ -331,7 +294,7 @@ h1 {
 .full { margin: 0 0 0.25rem; font: 400 0.875rem/1.5 var(--mono); color: var(--ink-3); }
 .txt { margin: 0; max-width: 100%; overflow-wrap: anywhere; font-size: 1.0625rem; line-height: 1.65; }
 
-/* --- Блоки заметок --- */
+/* --- Блоки заметок (все серые) --- */
 .blocks-container {
   margin: 1rem 0 0;
   display: flex;
@@ -344,7 +307,8 @@ h1 {
   flex-direction: column;
   gap: 0.2rem;
   padding: 0.6rem 0.85rem;
-  border-left: 2px solid;
+  background: var(--box-bg);
+  border-left: 2px solid var(--box-border);
   border-radius: 0 4px 4px 0;
 }
 
@@ -352,30 +316,15 @@ h1 {
   font: 600 0.6875rem/1.2 var(--mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--ink-3);
 }
 
 .info-value {
   font: 500 0.9375rem/1.5 var(--sans);
-  color: var(--ink);
+  color: var(--ink-2);
   letter-spacing: 0.01em;
 }
 .info-value span { display: block; }
-
-/* Бледные стили */
-.info-block.sanction { background: var(--sanction-bg); border-color: var(--sanction); }
-.info-block.sanction .info-label { color: var(--sanction); }
-
-.info-block.plain { background: var(--plain-bg); border-color: var(--plain); }
-.info-block.plain .info-label { color: var(--ink-3); }
-
-.info-block.note { background: var(--note-bg); border-color: var(--note); }
-.info-block.note .info-label { color: var(--note); }
-
-.info-block.warn { background: var(--warn-bg); border-color: var(--warn); }
-.info-block.warn .info-label { color: var(--warn); }
-
-.info-block.exclude { background: var(--exclude-bg); border-color: var(--exclude); }
-.info-block.exclude .info-label { color: var(--exclude); }
 
 /* Кнопка копирования */
 .copy {
@@ -693,8 +642,8 @@ mark { background: var(--inv-bg); color: var(--inv-fg); padding: 0 0.12em; borde
     return { shown: shown, total: total };
   }
 
-  function infoBlock(cls, label, value) {
-    return '<div class="info-block ' + cls + '">' +
+  function infoBlock(label, value) {
+    return '<div class="info-block">' +
       '<span class="info-label">' + esc(label) + '</span>' +
       '<div class="info-value">' + value + '</div>' +
     '</div>';
@@ -704,13 +653,13 @@ mark { background: var(--inv-bg); color: var(--inv-fg); padding: 0 0.12em; borde
     var rid = it.i || "";
     var blocks = "";
     
-    if (it.p) blocks += infoBlock("plain", "Пояснение", hl(it.p));
-    if (it.n) blocks += infoBlock("note", "Примечание", hl(it.n));
-    if (it.x) blocks += infoBlock("warn", "Пример", hl(it.x));
-    if (it.e) blocks += infoBlock("exclude", "Исключение", hl(it.e));
+    if (it.p) blocks += infoBlock("Пояснение", hl(it.p));
+    if (it.n) blocks += infoBlock("Примечание", hl(it.n));
+    if (it.x) blocks += infoBlock("Пример", hl(it.x));
+    if (it.e) blocks += infoBlock("Исключение", hl(it.e));
     if (it.s) {
       var sVal = arr(it.s).map(function (v) { return "<span>" + hl(v) + "</span>"; }).join("");
-      blocks += infoBlock("sanction", doc.sLabel, sVal);
+      blocks += infoBlock(doc.sLabel, sVal);
     }
 
     var isProse = !rid;
